@@ -20,27 +20,30 @@ import de.caritas.cob.videoservice.api.facade.VideoCallFacade;
 import de.caritas.cob.videoservice.api.model.RejectVideoCallDTO;
 import de.caritas.cob.videoservice.api.service.RejectVideoCallService;
 import de.caritas.cob.videoservice.api.service.video.VideoCallUrlGeneratorService;
+import de.caritas.cob.videoservice.config.security.AuthorisationService;
+import de.caritas.cob.videoservice.config.security.JwtAuthConverterProperties;
 import java.util.UUID;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest(VideoController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class VideoControllerIT {
+class VideoControllerIT {
 
   @Autowired private MockMvc mvc;
 
   @MockBean private VideoCallFacade videoCallFacade;
 
   @MockBean private RejectVideoCallService rejectVideoCallService;
+
+  @MockBean private AuthorisationService authorisationService;
+
+  @MockBean private JwtAuthConverterProperties jwtAuthConverterProperties;
 
   @MockBean
   @SuppressWarnings("unused")
@@ -51,7 +54,7 @@ public class VideoControllerIT {
   private VideoCallUrlGeneratorService videoCallUrlGeneratorService;
 
   @Test
-  public void stopVideoCallShouldReturnNoContentWhenEverythingSucceeded() throws Exception {
+  void stopVideoCallShouldReturnNoContentWhenEverythingSucceeded() throws Exception {
     var path = "/videocalls/stop/" + UUID.randomUUID();
 
     mvc.perform(post(path).header(RC_USER_ID_HEADER, RC_USER_ID_VALUE))
@@ -59,7 +62,7 @@ public class VideoControllerIT {
   }
 
   @Test
-  public void createVideoCall_Should_ReturnCreated_When_EverythingSucceeded() throws Exception {
+  void createVideoCall_Should_ReturnCreated_When_EverythingSucceeded() throws Exception {
 
     when(videoCallFacade.startVideoCall(any(), anyString()))
         .thenReturn(CREATE_VIDEO_CALL_RESPONSE_DTO);
@@ -74,7 +77,7 @@ public class VideoControllerIT {
   }
 
   @Test
-  public void createVideoCall_Should_ReturnBadRequest_When_SessionIdIsMissing() throws Exception {
+  void createVideoCall_Should_ReturnBadRequest_When_SessionIdIsMissing() throws Exception {
 
     mvc.perform(
             post(PATH_START_VIDEO_CALL)
@@ -85,7 +88,7 @@ public class VideoControllerIT {
   }
 
   @Test
-  public void createVideoCall_Should_ReturnBadRequest_When_RcUserIdIsMissing() throws Exception {
+  void createVideoCall_Should_ReturnBadRequest_When_RcUserIdIsMissing() throws Exception {
 
     mvc.perform(
             post(PATH_START_VIDEO_CALL)
@@ -96,8 +99,7 @@ public class VideoControllerIT {
   }
 
   @Test
-  public void rejectVideoCall_Should_ReturnBadRequest_When_VideoCallRejectDtoIsNull()
-      throws Exception {
+  void rejectVideoCall_Should_ReturnBadRequest_When_VideoCallRejectDtoIsNull() throws Exception {
 
     mvc.perform(
             post(PATH_REJECT_VIDEO_CALL)
@@ -107,8 +109,7 @@ public class VideoControllerIT {
   }
 
   @Test
-  public void rejectVideoCall_Should_ReturnBadRequest_When_VideoCallRejectDtoIsEmpty()
-      throws Exception {
+  void rejectVideoCall_Should_ReturnBadRequest_When_VideoCallRejectDtoIsEmpty() throws Exception {
 
     mvc.perform(
             post(PATH_REJECT_VIDEO_CALL)
@@ -119,7 +120,7 @@ public class VideoControllerIT {
   }
 
   @Test
-  public void rejectVideoCall_Should_ReturnOkAndCallService_When_VideoCallRejectDtoIsValid()
+  void rejectVideoCall_Should_ReturnOkAndCallService_When_VideoCallRejectDtoIsValid()
       throws Exception {
 
     String content =

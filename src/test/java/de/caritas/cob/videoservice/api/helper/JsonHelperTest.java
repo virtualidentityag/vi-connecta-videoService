@@ -18,13 +18,13 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class JsonHelperTest {
+class JsonHelperTest {
 
   @Test
-  public void serialize_Should_returnOptionalWithSerializedObject() {
+  void serialize_Should_returnOptionalWithSerializedObject() {
 
     OffsetDateTime offsetDateTime = CustomOffsetDateTime.nowInUtc();
     UUID uuid = UUID.randomUUID();
@@ -63,14 +63,16 @@ public class JsonHelperTest {
             + "\","
             + "  \"videoCallUuid\":\""
             + uuid
-            + "\""
+            + "\","
+            + "\"adviceSeekerId\": null,"
+            + "\"tenantId\": null"
             + "}";
 
     assertThat(result.get(), jsonEquals(expectedJson));
   }
 
   @Test
-  public void serialize_Should_returnOptionalEmpty_When_jsonStringCanNotBeConverted()
+  void serialize_Should_returnOptionalEmpty_When_jsonStringCanNotBeConverted()
       throws JsonProcessingException {
 
     ObjectMapper om = Mockito.spy(new ObjectMapper());
